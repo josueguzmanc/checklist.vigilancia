@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bitácora de Unidades – Trans Ráfagas del Golfo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap');
+
+  :root {
+    --rojo: #D10000;
+    --negro: #1a1a1a;
+    --gris: #f4f4f4;
+    --borde: #ddd;
+    --verde: #2e7d32;
+    --amarillo: #f57f17;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: #e8e8e8;
+    color: var(--negro);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: #fff;
+    border-bottom: 5px solid var(--rojo);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  .header img { height: 72px; }
+  .header-text h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--negro);
+    line-height: 1.1;
+  }
+  .header-text p {
+    font-size: 0.78rem;
+    color: #666;
+    margin-top: 2px;
+  }
+  .folio-badge {
+    margin-left: auto;
+    text-align: right;
+  }
+  .folio-badge .folio-label {
+    font-size: 0.7rem;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .folio-badge .folio-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--rojo);
+    line-height: 1;
+  }
+
+  /* TIPO SELECTOR */
+  .tipo-selector {
+    display: flex;
+    gap: 0;
+    margin: 20px 24px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .tipo-btn {
+    flex: 1;
+    padding: 16px;
+    border: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+  .tipo-btn.entrada { background: #fff; color: #aaa; }
+  .tipo-btn.salida  { background: #fff; color: #aaa; }
+  .tipo-btn.entrada.active { background: var(--verde); color: #fff; }
+  .tipo-btn.salida.active  { background: var(--rojo);  color: #fff; }
+
+  /* FORM CONTAINER */
+  .form-container {
+    max-width: 900px;
+    margin: 16px auto 40px;
+    padding: 0 16px;
+    display: none;
+  }
+  .form-container.visible { display: block; }
+
+  /* SECCIONES */
+  .seccion {
+    background: #fff;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  .seccion-titulo {
+    background: var(--negro);
+    color: #fff;
+    padding: 10px 18px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .seccion-titulo.rojo { background: var(--rojo); }
+  .seccion-body { padding: 16px 18px; }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .col-full { grid-column: 1 / -1; }
+
+  /* CAMPOS */
+  .campo label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #666;
+    margin-bottom: 4px;
+  }
+  .campo input, .campo select, .campo textarea {
+    width: 100%;
+    border: 1.5px solid var(--borde);
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-size: 0.92rem;
+    font-family: 'Barlow', sans-serif;
+    background: #fafafa;
+    transition: border 0.2s;
+  }
+  .campo input:focus, .campo select:focus, .campo textarea:focus {
+    outline: none;
+    border-color: var(--rojo);
+    background: #fff;
+  }
+  .campo textarea { resize: vertical; min-height: 70px; }
+
+  /* LLANTAS GRID */
+  .llantas-intro {
+    background: #fff8f8;
+    border: 1px solid #ffd0d0;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 0.83rem;
+    color: #b71c1c;
+    margin-bottom: 14px;
+  }
+  .llanta-diagram {
+    position: relative;
+    max-width: 400px;
+    margin: 0 auto 20px;
+  }
+  .llanta-diagram img { width: 100%; display: block; opacity: 0.25; }
+  
+  .llantas-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.83rem;
+  }
+  .llantas-tabla th {
+    background: #f0f0f0;
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid var(--borde);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .llantas-tabla td {
+    padding: 6px 8px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: middle;
+  }
+  .llantas-tabla tr:last-child td { border-bottom: none; }
+  .llantas-tabla tr:hover td { background: #fafafa; }
+
+  .pos-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--rojo);
+    min-width: 28px;
+    display: inline-block;
+    text-align: center;
+  }
+
+  .radio-group { display: flex; gap: 8px; }
+  .radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1.5px solid var(--borde);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .radio-group input[type=radio] { display: none; }
+  .radio-group input[type=radio]:checked + span { font-weight: 600; }
+  .radio-bien:has(input:checked)  { background: #e8f5e9; border-color: var(--verde); color: var(--verde); }
+  .radio-mal:has(input:checked)   { background: #ffebee; border-color: var(--rojo);  color: var(--rojo); }
+  .radio-na:has(input:checked)    { background: #eeeeee; border-color: #999; color: #666; }
+
+  .obs-llanta {
+    font-size: 0.78rem;
+    border: 1.5px solid var(--borde);
+    border-radius: 4px;
+    padding: 4px 8px;
+    width: 140px;
+    font-family: 'Barlow', sans-serif;
+  }
+  .obs-llanta:focus { outline: none; border-color: var(--rojo); }
+
+  /* FOTOS */
+  .foto-area {
+    border: 2px dashed var(--borde);
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: border 0.2s;
+    background: #fafafa;
+  }
+  .foto-area:hover { border-color: var(--rojo); }
+  .foto-area input { display: none; }
+  .foto-area p { font-size: 0.82rem; color: #999; margin-top: 4px; }
+  .foto-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+    justify-content: center;
+  }
+  .foto-preview img {
+    width: 80px; height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 2px solid #ddd;
+  }
+
+  /* BOTÓN ENVIAR */
+  .btn-enviar {
+    display: block;
+    width: 100%;
+    padding: 18px;
+    background: var(--negro);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-enviar:hover { background: var(--rojo); }
+  .btn-enviar.enviando { background: #888; cursor: not-allowed; }
+
+  /* MENSAJE EXITO */
+  .mensaje-exito {
+    display: none;
+    background: var(--verde);
+    color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    margin: 20px 16px;
+  }
+  .mensaje-exito h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 2rem; }
+  .mensaje-exito p { margin-top: 8px; font-size: 0.95rem; opacity: 0.9; }
+
+  /* MENSAJE INICIO */
+  .inicio {
+    max-width: 600px;
+    margin: 40px auto;
+    text-align: center;
+    padding: 0 16px;
+  }
+  .inicio h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.6rem;
+    color: #888;
+  }
+  .inicio p { font-size: 0.9rem; color: #aaa; margin-top: 8px; }
+
+  @media (max-width: 600px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .col-full { grid-column: 1; }
+    .header { flex-wrap: wrap; }
+    .folio-badge { margin-left: 0; width: 100%; text-align: left; }
+    .obs-llanta { width: 100px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <img id="logoImg" src="" alt="Trans Ráfagas del Golfo">
+  <div class="header-text">
+    <h1>CHECK LIST DE ENTRADA Y SALIDA DE LA UNIDAD</h1>
+    <p>Trans Ráfagas del Golfo, S.A. de C.V. &nbsp;|&nbsp; REG-LLT-021 &nbsp;|&nbsp; Rev. 02</p>
+  </div>
+  <div class="folio-badge">
+    <div class="folio-label">Folio</div>
+    <div class="folio-num" id="folioDisplay">—</div>
+  </div>
+</div>
+
+<!-- SELECTOR TIPO -->
+<div class="tipo-selector">
+  <button class="tipo-btn entrada" onclick="seleccionarTipo('ENTRADA')">⬆ ENTRADA</button>
+  <button class="tipo-btn salida"  onclick="seleccionarTipo('SALIDA')">⬇ SALIDA</button>
+</div>
+
+<!-- INICIO -->
+<div class="inicio" id="divInicio">
+  <h2>Selecciona ENTRADA o SALIDA para comenzar</h2>
+  <p>El folio se generará automáticamente</p>
+</div>
+
+<!-- FORMULARIO -->
+<div class="form-container" id="formContainer">
+
+  <!-- 1. DATOS GENERALES -->
+  <div class="seccion">
+    <div class="seccion-titulo">📋 1. Datos Generales</div>
+    <div class="seccion-body">
+      <div class="grid-3">
+        <div class="campo">
+          <label>Fecha</label>
+          <input type="date" id="fecha" required>
+        </div>
+        <div class="campo">
+          <label>Hora</label>
+          <input type="time" id="hora" required>
+        </div>
+        <div class="campo">
+          <label>Nombre del Guardia</label>
+          <input type="text" id="guardia" placeholder="Nombre completo" required>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. DATOS DE LA UNIDAD -->
+  <div class="seccion">
+    <div class="seccion-titulo">🚛 2. Datos de la Unidad</div>
+    <div class="seccion-body">
+      <div class="grid-3">
+        <div class="campo">
+          <label>Placa Tractocamión</label>
+          <input type="text" id="placaTractor" placeholder="Ej. ABC-1234" required>
+        </div>
+        <div class="campo">
+          <label>Placa 1er Remolque</label>
+          <input type="text" id="placa1Remolque" placeholder="Ej. ABC-1234">
+        </div>
+        <div class="campo">
+          <label>Placa 2do Remolque</label>
+          <input type="text" id="placa2Remolque" placeholder="Ej. ABC-1234">
+        </div>
+        <div class="campo">
+          <label>Nombre del Conductor</label>
+          <input type="text" id="conductor" placeholder="Nombre completo" required>
+        </div>
+        <div class="campo">
+          <label>Origen</label>
+          <input type="text" id="origen" placeholder="Ciudad / Lugar">
+        </div>
+        <div class="campo">
+          <label>Destino</label>
+          <input type="text" id="destino" placeholder="Ciudad / Lugar">
+        </div>
+        <div class="campo">
+          <label>Kilometraje</label>
+          <input type="number" id="kilometraje" placeholder="Ej. 100000">
+        </div>
+        <div class="campo">
+          <label>Nivel de Diesel (Lts.)</label>
+          <input type="number" id="diesel" placeholder="Ej. 800">
+        </div>
+        <div class="campo">
+          <label>Nivel de Aceite</label>
+          <select id="aceite">
+            <option value="">— Seleccionar —</option>
+            <option>Lleno</option>
+            <option>3/4</option>
+            <option>1/2</option>
+            <option>Bajo</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. INSPECCIÓN DE LLANTAS -->
+  <div class="seccion">
+    <div class="seccion-titulo rojo">🔴 3. Inspección de Llantas</div>
+    <div class="seccion-body">
+      <div class="llantas-intro">
+        ⚠️ Marca el estado de cada llanta. Si hay alguna en mal estado, ingresa la observación y sube una foto.
+      </div>
+      <table class="llantas-tabla">
+        <thead>
+          <tr>
+            <th>Pos.</th>
+            <th>Ubicación</th>
+            <th>Estado</th>
+            <th>Observación (si está MAL)</th>
+          </tr>
+        </thead>
+        <tbody id="tablaLlantas"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 4. OBSERVACIONES GENERALES -->
+  <div class="seccion">
+    <div class="seccion-titulo">📝 4. Observaciones Generales del Equipo</div>
+    <div class="seccion-body">
+      <div class="grid-2">
+        <div class="campo">
+          <label>Estado general de la unidad</label>
+          <select id="estadoGeneral">
+            <option value="">— Seleccionar —</option>
+            <option>Bueno</option>
+            <option>Regular</option>
+            <option>Requiere atención</option>
+            <option>Fuera de servicio</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label>Documentación completa (licencia, carta porte, etc.)</label>
+          <select id="documentacion">
+            <option value="">— Seleccionar —</option>
+            <option>Sí, completa</option>
+            <option>Incompleta – ver observaciones</option>
+          </select>
+        </div>
+        <div class="campo col-full">
+          <label>Observaciones generales del equipo / accesorios</label>
+          <textarea id="observacionesGenerales" placeholder="Describe cualquier anomalía, daño, faltante o situación relevante…"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. FOTOS -->
+  <div class="seccion">
+    <div class="seccion-titulo">📷 5. Fotografías de Evidencia</div>
+    <div class="seccion-body">
+      <p style="font-size:0.85rem;color:#666;margin-bottom:12px;">Sube fotos de llantas en mal estado, daños o cualquier situación que requiera evidencia.</p>
+      <div class="foto-area" onclick="document.getElementById('inputFotos').click()">
+        <input type="file" id="inputFotos" accept="image/*" multiple onchange="previewFotos(event)">
+        <div style="font-size:2rem;">📷</div>
+        <p>Toca aquí para tomar o seleccionar fotos</p>
+      </div>
+      <div class="foto-preview" id="fotoPreview"></div>
+    </div>
+  </div>
+
+  <!-- 6. FIRMA -->
+  <div class="seccion">
+    <div class="seccion-titulo">✍️ 6. Confirmación</div>
+    <div class="seccion-body">
+      <div class="grid-2">
+        <div class="campo">
+          <label>Nombre del Guardia (confirmar)</label>
+          <input type="text" id="firmGuardia" placeholder="Nombre completo">
+        </div>
+        <div class="campo">
+          <label>Nombre del Conductor</label>
+          <input type="text" id="firmConductor" placeholder="Nombre completo">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTÓN -->
+  <button class="btn-enviar" id="btnEnviar" onclick="enviarFormulario()">
+    REGISTRAR &amp; GUARDAR EN SHEETS
+  </button>
+
+</div><!-- fin form-container -->
+
+<!-- ÉXITO -->
+<div class="mensaje-exito" id="msgExito">
+  <h2>✅ Registro guardado</h2>
+  <p id="msgExitoTxt"></p>
+  <br>
+  <button onclick="reiniciar()" style="background:#fff;color:var(--verde);border:none;padding:10px 24px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;cursor:pointer;">NUEVO REGISTRO</button>
+</div>
+
+<script>
+// ============================================================
+//  CONFIGURACIÓN – Reemplaza con la URL de tu Google Sheet Script
+// ============================================================
+const SHEETS_URL = "PEGA_AQUI_TU_URL_DE_GOOGLE_APPS_SCRIPT";
+
+// ============================================================
+//  LLANTAS – posiciones
+// ============================================================
+const LLANTAS = [
+  {pos:1,  ubi:"Tractor – Delantera Izq."},
+  {pos:2,  ubi:"Tractor – Delantera Der."},
+  {pos:3,  ubi:"Tractor – Tracera Izq. Externa"},
+  {pos:4,  ubi:"Tractor – Trasera Izq. Interna"},
+  {pos:5,  ubi:"Tractor – Trasera Der. Interna"},
+  {pos:6,  ubi:"Tractor – Trasera Der. Externa"},
+  {pos:7,  ubi:"Tractor – Trasera 2ª Izq. Externa"},
+  {pos:8,  ubi:"Tractor – Trasera 2ª Izq. Interna"},
+  {pos:9,  ubi:"Tractor – Trasera 2ª Der. Interna"},
+  {pos:10, ubi:"Tractor – Trasera 2ª Der. Externa"},
+  {pos:11, ubi:"1er Remolque – Eje 1 Izq. Ext."},
+  {pos:12, ubi:"1er Remolque – Eje 1 Izq. Int."},
+  {pos:13, ubi:"1er Remolque – Eje 1 Der. Int."},
+  {pos:14, ubi:"1er Remolque – Eje 1 Der. Ext."},
+  {pos:15, ubi:"1er Remolque – Eje 2 Izq. Ext."},
+  {pos:16, ubi:"1er Remolque – Eje 2 Izq. Int."},
+  {pos:17, ubi:"1er Remolque – Eje 2 Der. Int."},
+  {pos:18, ubi:"1er Remolque – Eje 2 Der. Ext."},
+  {pos:19, ubi:"1er Remolque – Eje 3 Izq. Ext."},
+  {pos:20, ubi:"1er Remolque – Eje 3 Izq. Int."},
+  {pos:21, ubi:"1er Remolque – Eje 3 Der. Int."},
+  {pos:22, ubi:"1er Remolque – Eje 3 Der. Ext."},
+  {pos:23, ubi:"2do Remolque – Eje 1 Izq. Ext."},
+  {pos:24, ubi:"2do Remolque – Eje 1 Izq. Int."},
+  {pos:25, ubi:"2do Remolque – Eje 1 Der. Int."},
+  {pos:26, ubi:"2do Remolque – Eje 1 Der. Ext."},
+  {pos:27, ubi:"2do Remolque – Eje 2 Izq. Ext."},
+  {pos:28, ubi:"2do Remolque – Eje 2 Izq. Int."},
+  {pos:29, ubi:"2do Remolque – Eje 2 Der. Int."},
+  {pos:30, ubi:"2do Remolque – Eje 2 Der. Ext."},
+  {pos:31, ubi:"2do Remolque – Eje 3 Izq. Ext."},
+  {pos:32, ubi:"2do Remolque – Eje 3 Izq. Int."},
+  {pos:33, ubi:"2do Remolque – Eje 3 Der. Int."},
+  {pos:34, ubi:"2do Remolque – Eje 3 Der. Ext."},
+  {pos:35, ubi:"Refacción Tractor"},
+  {pos:36, ubi:"Refacción Remolque"},
+];
+
+// ============================================================
+//  Logo en base64 (embebido para funcionar sin internet)
+// ============================================================
+const LOGO_B64 = "data:image/jpeg;base64,LOGO_PLACEHOLDER";
+
+// Inyectar logo real
+window.addEventListener('DOMContentLoaded', () => {
+  // Construir tabla de llantas
+  const tbody = document.getElementById('tablaLlantas');
+  LLANTAS.forEach(l => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="pos-num">${l.pos}</span></td>
+      <td style="font-size:0.82rem">${l.ubi}</td>
+      <td>
+        <div class="radio-group">
+          <label class="radio-bien"><input type="radio" name="llanta_${l.pos}" value="BIEN"><span>✅ Bien</span></label>
+          <label class="radio-mal"><input type="radio" name="llanta_${l.pos}" value="MAL"><span>❌ Mal</span></label>
+          <label class="radio-na"><input type="radio" name="llanta_${l.pos}" value="N/A" checked><span>N/A</span></label>
+        </div>
+      </td>
+      <td><input class="obs-llanta" type="text" id="obs_llanta_${l.pos}" placeholder="Describe el problema…"></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Fecha y hora actuales
+  const now = new Date();
+  document.getElementById('fecha').value = now.toISOString().slice(0,10);
+  document.getElementById('hora').value = now.toTimeString().slice(0,5);
+});
+
+// ============================================================
+//  FOLIO
+// ============================================================
+let tipoActual = '';
+
+function generarFolio(tipo) {
+  const now = new Date();
+  const d = now.toISOString().slice(0,10).replace(/-/g,'');
+  const r = String(Math.floor(Math.random()*9000)+1000);
+  return `${tipo === 'ENTRADA' ? 'ENT' : 'SAL'}-${d}-${r}`;
+}
+
+// ============================================================
+//  SELECCIÓN DE TIPO
+// ============================================================
+function seleccionarTipo(tipo) {
+  tipoActual = tipo;
+  document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.tipo-btn.${tipo.toLowerCase()}`).classList.add('active');
+
+  const folio = generarFolio(tipo);
+  document.getElementById('folioDisplay').textContent = folio;
+  document.getElementById('folioDisplay').dataset.valor = folio;
+
+  document.getElementById('divInicio').style.display = 'none';
+  document.getElementById('formContainer').classList.add('visible');
+  document.getElementById('msgExito').style.display = 'none';
+}
+
+// ============================================================
+//  PREVIEW FOTOS
+// ============================================================
+function previewFotos(e) {
+  const preview = document.getElementById('fotoPreview');
+  Array.from(e.target.files).forEach(f => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = document.createElement('img');
+      img.src = ev.target.result;
+      preview.appendChild(img);
+    };
+    reader.readAsDataURL(f);
+  });
+}
+
+// ============================================================
+//  ENVÍO A GOOGLE SHEETS
+// ============================================================
+async function enviarFormulario() {
+  // Validaciones básicas
+  if (!tipoActual) { alert('Selecciona ENTRADA o SALIDA'); return; }
+  if (!document.getElementById('guardia').value.trim()) { alert('Escribe el nombre del guardia'); return; }
+  if (!document.getElementById('placaTractor').value.trim()) { alert('Escribe la placa del tractocamión'); return; }
+  if (!document.getElementById('conductor').value.trim()) { alert('Escribe el nombre del conductor'); return; }
+
+  // Recopilar llantas
+  const llantas = {};
+  LLANTAS.forEach(l => {
+    const checked = document.querySelector(`input[name="llanta_${l.pos}"]:checked`);
+    llantas[`Llanta_${l.pos}_${l.ubi.replace(/[^a-zA-Z0-9]/g,'_')}`] = checked ? checked.value : 'N/A';
+    const obs = document.getElementById(`obs_llanta_${l.pos}`).value;
+    if (obs) llantas[`Obs_Llanta_${l.pos}`] = obs;
+  });
+
+  // Recopilar fotos como base64
+  const archivos = document.getElementById('inputFotos').files;
+  const fotosBase64 = [];
+  for (const f of archivos) {
+    const b64 = await toBase64(f);
+    fotosBase64.push({ nombre: f.name, data: b64 });
+  }
+
+  const payload = {
+    folio:              document.getElementById('folioDisplay').dataset.valor,
+    tipo:               tipoActual,
+    fecha:              document.getElementById('fecha').value,
+    hora:               document.getElementById('hora').value,
+    guardia:            document.getElementById('guardia').value,
+    placaTractor:       document.getElementById('placaTractor').value,
+    placa1Remolque:     document.getElementById('placa1Remolque').value,
+    placa2Remolque:     document.getElementById('placa2Remolque').value,
+    conductor:          document.getElementById('conductor').value,
+    origen:             document.getElementById('origen').value,
+    destino:            document.getElementById('destino').value,
+    kilometraje:        document.getElementById('kilometraje').value,
+    diesel:             document.getElementById('diesel').value,
+    aceite:             document.getElementById('aceite').value,
+    estadoGeneral:      document.getElementById('estadoGeneral').value,
+    documentacion:      document.getElementById('documentacion').value,
+    observaciones:      document.getElementById('observacionesGenerales').value,
+    firmGuardia:        document.getElementById('firmGuardia').value,
+    firmConductor:      document.getElementById('firmConductor').value,
+    fotos:              fotosBase64,
+    ...llantas
+  };
+
+  const btn = document.getElementById('btnEnviar');
+  btn.textContent = '⏳ Guardando…';
+  btn.classList.add('enviando');
+  btn.disabled = true;
+
+  try {
+    if (SHEETS_URL === "PEGA_AQUI_TU_URL_DE_GOOGLE_APPS_SCRIPT") {
+      // DEMO: muestra los datos en consola
+      console.log('📋 Datos del formulario:', JSON.stringify(payload, null, 2));
+      await new Promise(r => setTimeout(r, 1200));
+      mostrarExito(payload.folio, payload.tipo);
+    } else {
+      await fetch(SHEETS_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      mostrarExito(payload.folio, payload.tipo);
+    }
+  } catch(err) {
+    alert('❌ Error al guardar. Verifica la URL del script y tu conexión.');
+    btn.textContent = 'REGISTRAR & GUARDAR EN SHEETS';
+    btn.classList.remove('enviando');
+    btn.disabled = false;
+  }
+}
+
+function toBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+function mostrarExito(folio, tipo) {
+  document.getElementById('formContainer').classList.remove('visible');
+  document.getElementById('msgExitoTxt').textContent =
+    `Folio ${folio} (${tipo}) guardado correctamente en Google Sheets.`;
+  document.getElementById('msgExito').style.display = 'block';
+}
+
+function reiniciar() {
+  document.getElementById('msgExito').style.display = 'none';
+  document.getElementById('divInicio').style.display = 'block';
+  document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('active'));
+  tipoActual = '';
+  document.getElementById('folioDisplay').textContent = '—';
+  document.getElementById('fotoPreview').innerHTML = '';
+  document.getElementById('tablaLlantas').innerHTML = '';
+  document.getElementById('btnEnviar').textContent = 'REGISTRAR & GUARDAR EN SHEETS';
+  document.getElementById('btnEnviar').classList.remove('enviando');
+  document.getElementById('btnEnviar').disabled = false;
+  // Recargar
+  location.reload();
+}
+</script>
+</body>
+</html>
