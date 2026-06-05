@@ -707,6 +707,7 @@ async function enviarFormulario() {
     } else {
       await fetch(SHEETS_URL, {
         method: 'POST',
+        mode: 'no-cors',
         body: JSON.stringify(payload),
         headers: { 'Content-Type': 'application/json' }
       });
