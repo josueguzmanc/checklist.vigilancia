@@ -1,1 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Programación de Unidades – Trans Ráfagas del Golfo</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap');
 
+:root {
+  --primary: #1a73e8;
+  --primary-dark: #1557b0;
+  --danger: #d93025;
+  --success: #1e8e3e;
+  --surface: #ffffff;
+  --bg: #f8f9fa;
+  --border: #dadce0;
+  --text: #202124;
+  --text-muted: #5f6368;
+  --text-hint: #9aa0a6;
+  --red-brand: #C8000A;
+  --shadow-1: 0 1px 3px rgba(60,64,67,.15), 0 1px 2px rgba(60,64,67,.12);
+  --shadow-2: 0 2px 6px rgba(60,64,67,.15), 0 1px 3px rgba(60,64,67,.12);
+  --radius: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--surface);
+  border-bottom: 3px solid var(--red-brand);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header img { height: 44px; width: auto; flex-shrink: 0; }
+.header-text { flex: 1; min-width: 0; }
+.header-text h1 {
+  font-family: 'Google Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+.header-text p { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+/* ── NAV TABS ── */
+.nav-tabs {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  padding: 0 16px;
+  gap: 4px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.nav-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+  cursor: pointer;
+}
+.nav-tab:hover { color: var(--text); }
+.nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+.nav-tab svg { flex-shrink: 0; }
+
+/* ── PAGE CONTENT ── */
+.page { padding: 20px 16px 40px; max-width: 1200px; margin: 0 auto; }
+
+/* ── INFO BAR ── */
+.info-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.info-bar-title {
+  font-family: 'Google Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.info-bar-actions { display: flex; gap: 8px; }
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: 'Google Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.btn-outline:hover { border-color: var(--primary); color: var(--primary); background: #e8f0fe; }
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: var(--primary);
+  color: #fff;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s;
+  box-shadow: var(--shadow-1);
+}
+.btn-primary:hover { background: var(--primary-dark); }
+
+/* ── NOTICE ── */
+.notice {
+  background: #e8f0fe;
+  border: 1px solid #aecbfa;
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #174ea6;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.notice svg { flex-shrink: 0; margin-top: 1px; }
+
+/* ── SHEET WRAPPER ── */
+.sheet-wrapper {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.sheet-toolbar {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: #fafafa;
+}
+.sheet-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.sheet-toolbar-left svg { color: var(--success); }
+
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  flex-shrink: 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.sheet-frame-container {
+  position: relative;
+  width: 100%;
+  /* altura responsiva: ocupa el viewport menos el header + tabs + toolbars */
+  height: calc(100vh - 220px);
+  min-height: 420px;
+}
+
+.sheet-frame-container iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+/* ── FOOTER NOTE ── */
+.footer-note {
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--text-hint);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 480px) {
+  .info-bar { flex-direction: column; align-items: flex-start; }
+  .sheet-frame-container { height: calc(100vh - 260px); }
+  .nav-tab { padding: 10px 12px; font-size: 12px; }
+}
+
+svg { display: block; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <img src="logo-rojo.png" alt="Trans Ráfagas del Golfo">
+  <div class="header-text">
+    <h1>PROGRAMACIÓN DE ENTRADA Y SALIDA DE UNIDADES</h1>
+    <p>Transportes Ráfagas del Golfo S.A. de C.V.</p>
+  </div>
+</div>
+
+<!-- NAV TABS -->
+<nav class="nav-tabs">
+  <a class="nav-tab" href="index.html">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+    </svg>
+    Check List Unidades
+  </a>
+  <a class="nav-tab active" href="programacion.html">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+      <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+    </svg>
+    Programación de Patio
+  </a>
+</nav>
+
+<!-- CONTENIDO -->
+<div class="page">
+
+  <div class="info-bar">
+    <div class="info-bar-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C8000A" stroke-width="2">
+        <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      Programación de Patio
+    </div>
+    <div class="info-bar-actions">
+      <a class="btn-outline"
+         href="https://docs.google.com/spreadsheets/d/1bod8AC0ppg4dW3X8xHO5celrWp6J4rOP9JUXk3JjksU/edit"
+         target="_blank" rel="noopener">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+          <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+        Abrir en Sheets
+      </a>
+    </div>
+  </div>
+
+  <div class="notice">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <span>
+      Esta es una vista de solo lectura. Para editar la programación, usa el botón
+      <strong>Abrir en Sheets</strong> — los cambios se reflejan aquí en segundos al recargar.
+    </span>
+  </div>
+
+  <div class="sheet-wrapper">
+    <div class="sheet-toolbar">
+      <div class="sheet-toolbar-left">
+        <div class="status-dot"></div>
+        Conectado a Google Sheets · Se actualiza al recargar la página
+      </div>
+      <button class="btn-outline" onclick="document.querySelector('iframe').src = document.querySelector('iframe').src" style="padding:6px 12px; font-size:12px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+        Actualizar
+      </button>
+    </div>
+
+    <div class="sheet-frame-container">
+      <iframe
+        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRolxvVPXg3-qT5mmqHeZCQVBORuxcsbcpUngdmc-gCQtXap6FpRPuKkWP5RvevBvu4DIzdrVrAz4rG/pubhtml?gid=1368288008&single=true&widget=true&headers=false"
+        title="Programación de Patio – Trans Ráfagas del Golfo"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+
+  <p class="footer-note">
+    Los datos se sincronizan desde Google Sheets · Trans Ráfagas del Golfo S.A. de C.V.
+  </p>
+
+</div>
+
+</body>
+</html>
