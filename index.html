@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Programación de Unidades – Trans Ráfagas del Golfo</title>
+<title>Bitácora de Unidades – Trans Ráfagas del Golfo</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap');
 
@@ -35,7 +35,7 @@ body {
   line-height: 1.5;
 }
 
-/* ── HEADER ── */
+/* HEADER */
 .header {
   background: var(--surface);
   border-bottom: 3px solid var(--red-brand);
@@ -56,8 +56,20 @@ body {
   font-weight: 700;
   color: var(--text);
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .header-text p { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+.folio-badge { text-align: right; flex-shrink: 0; }
+.folio-label { font-size: 10px; color: var(--text-hint); text-transform: uppercase; letter-spacing: 0.8px; }
+.folio-num {
+  font-family: 'Google Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--red-brand);
+  line-height: 1.1;
+}
 
 /* ── NAV TABS ── */
 .nav-tabs {
@@ -68,6 +80,7 @@ body {
   gap: 4px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  box-shadow: var(--shadow-1);
 }
 .nav-tab {
   display: flex;
@@ -78,39 +91,317 @@ body {
   font-size: 13px;
   font-weight: 500;
   color: var(--text-muted);
-  text-decoration: none;
+  border: none;
+  background: none;
   border-bottom: 3px solid transparent;
   white-space: nowrap;
-  transition: color 0.15s, border-color 0.15s;
   cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  margin-bottom: -1px;
 }
 .nav-tab:hover { color: var(--text); }
 .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
-.nav-tab svg { flex-shrink: 0; }
 
-/* ── PAGE CONTENT ── */
-.page { padding: 20px 16px 40px; max-width: 1200px; margin: 0 auto; }
+/* ── PÁGINAS ── */
+.page { display: none; }
+.page.active { display: block; }
 
-/* ── INFO BAR ── */
-.info-bar {
+/* TIPO SELECTOR */
+.tipo-selector {
+  display: flex;
+  margin: 16px 16px 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-1);
+}
+.tipo-btn {
+  flex: 1;
+  padding: 14px 8px;
+  border: none;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: background 0.2s, color 0.2s;
+  background: var(--surface);
+  color: var(--text-muted);
+  border-bottom: 3px solid transparent;
+}
+.tipo-btn.active-entrada { background: #e8f5e9; color: var(--success); border-bottom-color: var(--success); }
+.tipo-btn.active-salida  { background: #fce8e6; color: var(--danger);  border-bottom-color: var(--danger); }
+
+/* INICIO */
+.inicio {
+  max-width: 480px;
+  margin: 48px auto;
+  text-align: center;
+  padding: 0 24px;
+}
+.inicio h2 { font-family: 'Google Sans', sans-serif; font-size: 20px; font-weight: 500; color: var(--text-muted); }
+.inicio p { font-size: 13px; color: var(--text-hint); margin-top: 8px; }
+
+/* LOADING */
+.folio-loading { display: none; text-align: center; padding: 32px 16px; }
+.spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* FORM */
+.form-container { max-width: 680px; margin: 16px auto 40px; padding: 0 12px; display: none; }
+.form-container.visible { display: block; }
+
+/* CARD */
+.card { background: var(--surface); border-radius: var(--radius); margin-bottom: 12px; box-shadow: var(--shadow-1); overflow: hidden; }
+.card-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-header-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.card-header h2 { font-family: 'Google Sans', sans-serif; font-size: 13px; font-weight: 500; color: var(--text); letter-spacing: 0.2px; }
+.card-body { padding: 16px; }
+
+/* GRIDS */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.col-full { grid-column: 1 / -1; }
+
+@media (max-width: 540px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 380px) {
+  .grid-3 { grid-template-columns: 1fr; }
+}
+
+/* FIELDS */
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+  color: var(--text);
+  background: var(--surface);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235f6368' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.12);
+}
+.field textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
+
+/* LLANTAS */
+.llantas-aviso {
+  background: #fef7e0;
+  border: 1px solid #f9ab00;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #7a4f00;
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+.llanta-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 6px;
+  background: #fafafa;
+}
+.llanta-num {
+  font-family: 'Google Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--red-brand);
+  min-width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.llanta-ubi {
+  font-size: 11px;
+  color: var(--text-muted);
+  flex: 1;
+  line-height: 1.3;
+  min-width: 0;
+}
+.llanta-input {
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-family: 'Roboto', sans-serif;
+  color: var(--text);
+  background: var(--surface);
+  width: 120px;
+  flex-shrink: 0;
+  transition: border-color 0.15s;
+}
+.llanta-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.1);
+}
+@media (max-width: 480px) {
+  .llanta-row { flex-wrap: wrap; }
+  .llanta-ubi { width: 100%; flex: none; order: 2; }
+  .llanta-num { order: 1; }
+  .llanta-input { order: 3; width: 100%; }
+}
+
+/* REPORTE LLANTAS */
+.reporte-llantas {
+  margin-top: 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.reporte-llantas-header {
+  background: #fce8e6;
+  padding: 10px 14px;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--danger);
+  border-bottom: 1px solid #f5c2c7;
+}
+.reporte-llantas-body { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+
+/* FOTOS */
+.foto-drop {
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--bg);
+  transition: border-color 0.15s, background 0.15s;
+}
+.foto-drop:hover,
+.foto-drop.drag-over { border-color: var(--primary); background: #e8f0fe; }
+.foto-drop input { display: none; }
+.foto-drop-icon { width: 36px; height: 36px; margin: 0 auto 8px; color: var(--text-hint); }
+.foto-drop p { font-size: 13px; color: var(--text-muted); }
+.foto-drop small { font-size: 11px; color: var(--text-hint); }
+.foto-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.foto-preview-item { position: relative; aspect-ratio: 1; }
+.foto-preview-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); }
+.foto-preview-item button {
+  position: absolute; top: 2px; right: 2px;
+  width: 18px; height: 18px;
+  border-radius: 50%; border: none;
+  background: rgba(0,0,0,0.6); color: #fff;
+  font-size: 10px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* SUBMIT */
+.btn-submit {
+  display: block; width: 100%;
+  padding: 15px 24px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: var(--radius);
+  font-family: 'Google Sans', sans-serif;
+  font-size: 15px; font-weight: 500; letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: var(--shadow-1);
+  margin-top: 4px;
+}
+.btn-submit:hover:not(:disabled) { background: var(--primary-dark); box-shadow: var(--shadow-2); }
+.btn-submit:disabled { background: var(--border); color: var(--text-hint); cursor: not-allowed; box-shadow: none; }
+.btn-submit-inner { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.btn-spinner {
+  display: none; width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff;
+  border-radius: 50%; animation: spin 0.7s linear infinite;
+}
+.btn-submit.loading .btn-spinner { display: block; }
+.btn-submit.loading .btn-text { opacity: 0.8; }
+
+/* EXITO */
+.exito-card {
+  display: none;
+  background: var(--surface); border-radius: var(--radius);
+  box-shadow: var(--shadow-2);
+  margin: 20px 16px; padding: 40px 24px; text-align: center;
+}
+.exito-icon {
+  width: 56px; height: 56px; background: #e8f5e9;
+  border-radius: 50%; margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+}
+.exito-card h2 { font-family: 'Google Sans', sans-serif; font-size: 20px; font-weight: 500; color: var(--text); margin-bottom: 8px; }
+.exito-card p { font-size: 13px; color: var(--text-muted); }
+.exito-folio {
+  display: inline-block; background: var(--bg);
+  border: 1px solid var(--border); border-radius: 20px;
+  padding: 6px 16px;
+  font-family: 'Google Sans', sans-serif; font-size: 16px; font-weight: 700; color: var(--primary);
+  margin: 16px 0;
+}
+.btn-nuevo {
+  display: inline-block; padding: 10px 24px;
+  border: 1.5px solid var(--primary); border-radius: 6px;
+  color: var(--primary); background: transparent;
+  font-family: 'Google Sans', sans-serif; font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: background 0.15s;
+}
+.btn-nuevo:hover { background: #e8f0fe; }
+
+/* ── PROGRAMACIÓN PAGE ── */
+.prog-page { padding: 16px 16px 40px; max-width: 1200px; margin: 0 auto; }
+
+.prog-info-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
-.info-bar-title {
+.prog-info-title {
   font-family: 'Google Sans', sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--text);
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.info-bar-actions { display: flex; gap: 8px; }
-
 .btn-outline {
   display: inline-flex;
   align-items: center;
@@ -129,42 +420,21 @@ body {
 }
 .btn-outline:hover { border-color: var(--primary); color: var(--primary); background: #e8f0fe; }
 
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  background: var(--primary);
-  color: #fff;
-  font-family: 'Google Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  text-decoration: none;
-  transition: background 0.15s;
-  box-shadow: var(--shadow-1);
-}
-.btn-primary:hover { background: var(--primary-dark); }
-
-/* ── NOTICE ── */
-.notice {
+.prog-notice {
   background: #e8f0fe;
   border: 1px solid #aecbfa;
   border-radius: var(--radius);
-  padding: 12px 16px;
+  padding: 11px 14px;
   font-size: 13px;
   color: #174ea6;
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   line-height: 1.5;
 }
-.notice svg { flex-shrink: 0; margin-top: 1px; }
+.prog-notice svg { flex-shrink: 0; margin-top: 1px; }
 
-/* ── SHEET WRAPPER ── */
 .sheet-wrapper {
   background: var(--surface);
   border-radius: var(--radius);
@@ -172,9 +442,8 @@ body {
   overflow: hidden;
   border: 1px solid var(--border);
 }
-
 .sheet-toolbar {
-  padding: 10px 16px;
+  padding: 9px 14px;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -190,8 +459,6 @@ body {
   font-size: 12px;
   color: var(--text-muted);
 }
-.sheet-toolbar-left svg { color: var(--success); }
-
 .status-dot {
   width: 8px; height: 8px;
   border-radius: 50%;
@@ -199,19 +466,14 @@ body {
   flex-shrink: 0;
   animation: pulse 2s ease-in-out infinite;
 }
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
 .sheet-frame-container {
   position: relative;
   width: 100%;
-  /* altura responsiva: ocupa el viewport menos el header + tabs + toolbars */
-  height: calc(100vh - 220px);
-  min-height: 420px;
+  height: calc(100vh - 230px);
+  min-height: 400px;
 }
-
 .sheet-frame-container iframe {
   position: absolute;
   inset: 0;
@@ -221,22 +483,19 @@ body {
   display: block;
 }
 
-/* ── FOOTER NOTE ── */
 .footer-note {
-  margin-top: 12px;
+  margin-top: 10px;
   font-size: 11px;
   color: var(--text-hint);
   text-align: center;
-  line-height: 1.6;
 }
 
-/* ── RESPONSIVE ── */
 @media (max-width: 480px) {
-  .info-bar { flex-direction: column; align-items: flex-start; }
-  .sheet-frame-container { height: calc(100vh - 260px); }
-  .nav-tab { padding: 10px 12px; font-size: 12px; }
+  .prog-info-bar { flex-direction: column; align-items: flex-start; }
+  .sheet-frame-container { height: calc(100vh - 270px); }
 }
 
+.required { color: var(--danger); margin-left: 2px; }
 svg { display: block; }
 </style>
 </head>
@@ -246,40 +505,302 @@ svg { display: block; }
 <div class="header">
   <img src="logo-rojo.png" alt="Trans Ráfagas del Golfo">
   <div class="header-text">
-    <h1>PROGRAMACIÓN DE ENTRADA Y SALIDA DE UNIDADES</h1>
+    <h1>BITÁCORA DE UNIDADES</h1>
     <p>Transportes Ráfagas del Golfo S.A. de C.V.</p>
+  </div>
+  <div class="folio-badge">
+    <div class="folio-label">Folio</div>
+    <div class="folio-num" id="folioDisplay">—</div>
   </div>
 </div>
 
 <!-- NAV TABS -->
 <nav class="nav-tabs">
-  <a class="nav-tab" href="index.html">
+  <button class="nav-tab active" id="tab-checklist" onclick="cambiarTab('checklist')">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
     </svg>
     Check List Unidades
-  </a>
-  <a class="nav-tab active" href="programacion.html">
+  </button>
+  <button class="nav-tab" id="tab-programacion" onclick="cambiarTab('programacion')">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
       <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
     </svg>
     Programación de Patio
-  </a>
+  </button>
 </nav>
 
-<!-- CONTENIDO -->
-<div class="page">
+<!-- ═══════════════════════════════════════════
+     PÁGINA 1: CHECK LIST
+════════════════════════════════════════════ -->
+<div class="page active" id="page-checklist">
 
-  <div class="info-bar">
-    <div class="info-bar-title">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C8000A" stroke-width="2">
-        <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
-        <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-      </svg>
-      Programación de Patio
+  <h1 style="display:none">CHECK LIST ENTRADA / SALIDA DE UNIDAD</h1>
+
+  <!-- TIPO -->
+  <div class="tipo-selector">
+    <button class="tipo-btn" id="btnEntrada" onclick="seleccionarTipo('ENTRADA')">Entrada</button>
+    <button class="tipo-btn" id="btnSalida"  onclick="seleccionarTipo('SALIDA')">Salida</button>
+  </div>
+
+  <!-- INICIO -->
+  <div class="inicio" id="divInicio">
+    <h2>Selecciona Entrada o Salida</h2>
+    <p>El folio se asignará automáticamente desde el servidor</p>
+  </div>
+
+  <!-- CARGANDO FOLIO -->
+  <div class="folio-loading" id="folioLoading">
+    <div class="spinner"></div>
+    <p style="font-size:13px;color:var(--text-muted);">Obteniendo número de folio...</p>
+  </div>
+
+  <!-- FORMULARIO -->
+  <div class="form-container" id="formContainer">
+
+    <!-- 1. Datos generales -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5f6368" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <h2>Datos Generales</h2>
+      </div>
+      <div class="card-body">
+        <div class="grid-3">
+          <div class="field">
+            <label>Fecha <span class="required">*</span></label>
+            <input type="date" id="fecha">
+          </div>
+          <div class="field">
+            <label>Hora <span class="required">*</span></label>
+            <input type="time" id="hora">
+          </div>
+          <div class="field">
+            <label>Guardia <span class="required">*</span></label>
+            <input type="text" id="guardia" placeholder="Nombre completo">
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="info-bar-actions">
+
+    <!-- 2. Datos de la unidad -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5f6368" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </div>
+        <h2>Datos de la Unidad</h2>
+      </div>
+      <div class="card-body">
+        <div class="grid-3">
+          <div class="field">
+            <label>Placa Tractocamión <span class="required">*</span></label>
+            <input type="text" id="placaTractor" placeholder="ABC-1234" autocapitalize="characters">
+          </div>
+          <div class="field">
+            <label>Placa 1er Remolque</label>
+            <input type="text" id="placa1Remolque" placeholder="ABC-1234" autocapitalize="characters">
+          </div>
+          <div class="field">
+            <label>Placa 2do Remolque</label>
+            <input type="text" id="placa2Remolque" placeholder="ABC-1234" autocapitalize="characters">
+          </div>
+          <div class="field col-full">
+            <label>Nombre del Conductor <span class="required">*</span></label>
+            <input type="text" id="conductor" placeholder="Nombre completo">
+          </div>
+          <div class="field">
+            <label>Origen</label>
+            <input type="text" id="origen" placeholder="Ciudad / Lugar">
+          </div>
+          <div class="field">
+            <label>Destino</label>
+            <input type="text" id="destino" placeholder="Ciudad / Lugar">
+          </div>
+          <div class="field">
+            <label>Kilometraje</label>
+            <input type="number" id="kilometraje" placeholder="100000" inputmode="numeric">
+          </div>
+          <div class="field">
+            <label>Diesel (Lts.)</label>
+            <input type="number" id="diesel" placeholder="800" inputmode="numeric">
+          </div>
+          <div class="field">
+            <label>Nivel de Aceite</label>
+            <select id="aceite">
+              <option value="">Seleccionar</option>
+              <option>Lleno</option>
+              <option>3/4</option>
+              <option>1/2</option>
+              <option>Bajo</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Llantas -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5f6368" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
+        </div>
+        <h2>Inspección de Llantas</h2>
+      </div>
+      <div class="card-body">
+        <div class="llantas-aviso">
+          Anota el número o medida de cada llanta en el campo correspondiente. Si alguna presenta problemas, usa el Reporte al final de esta sección.
+        </div>
+        <div id="listaLlantas"></div>
+        <div class="reporte-llantas">
+          <div class="reporte-llantas-header">
+            Reporte de llantas con problema — completar solo si aplica
+          </div>
+          <div class="reporte-llantas-body">
+            <div class="field">
+              <label>Posiciones con problema (ej: 3, 7, 12)</label>
+              <input type="text" id="llantasPosProblema" placeholder="Ej: 3, 7, 12">
+            </div>
+            <div class="field">
+              <label>Descripción del problema</label>
+              <textarea id="llantasDescProblema" placeholder="Describe el estado de las llantas con problema, tipo de falla, etc."></textarea>
+            </div>
+            <div class="field">
+              <label>Fotografía de las llantas con problema (opcional)</label>
+              <div class="foto-drop" id="fotoLlantaDrop" onclick="document.getElementById('inputFotoLlanta').click()">
+                <input type="file" id="inputFotoLlanta" accept="image/*" multiple onchange="agregarFotosLlanta(event)">
+                <div class="foto-drop-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                </div>
+                <p>Toca para seleccionar o tomar fotos</p>
+                <small>Puedes seleccionar varias fotos a la vez</small>
+              </div>
+              <div class="foto-preview-grid" id="fotoLlantaPreview"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Observaciones -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5f6368" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <h2>Observaciones Generales</h2>
+      </div>
+      <div class="card-body">
+        <div class="grid-2">
+          <div class="field">
+            <label>Estado general de la unidad</label>
+            <select id="estadoGeneral">
+              <option value="">Seleccionar</option>
+              <option>Bueno</option>
+              <option>Regular</option>
+              <option>Requiere atención</option>
+              <option>Fuera de servicio</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Documentación</label>
+            <select id="documentacion">
+              <option value="">Seleccionar</option>
+              <option>Completa</option>
+              <option>Incompleta – ver observaciones</option>
+            </select>
+          </div>
+          <div class="field col-full">
+            <label>Observaciones del equipo / accesorios</label>
+            <textarea id="observacionesGenerales" placeholder="Describe anomalías, daños, faltantes o situaciones relevantes…"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Fotos generales -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5f6368" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+        <h2>Fotografías Generales</h2>
+      </div>
+      <div class="card-body">
+        <div class="foto-drop" id="fotoDrop" onclick="document.getElementById('inputFotos').click()">
+          <input type="file" id="inputFotos" accept="image/*" multiple onchange="agregarFotos(event)">
+          <div class="foto-drop-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <p>Toca para seleccionar o tomar fotos</p>
+          <small>Evidencia adicional, daños generales, documentos</small>
+        </div>
+        <div class="foto-preview-grid" id="fotoPreviewGrid"></div>
+      </div>
+    </div>
+
+    <!-- 6. Confirmación -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5f6368" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <h2>Confirmación</h2>
+      </div>
+      <div class="card-body">
+        <div class="grid-2">
+          <div class="field">
+            <label>Nombre Guardia (confirmar)</label>
+            <input type="text" id="firmGuardia" placeholder="Nombre completo">
+          </div>
+          <div class="field">
+            <label>Nombre Conductor (confirmar)</label>
+            <input type="text" id="firmConductor" placeholder="Nombre completo">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-submit" id="btnEnviar" onclick="enviarFormulario()">
+      <div class="btn-submit-inner">
+        <div class="btn-spinner"></div>
+        <span class="btn-text">Registrar y Guardar</span>
+      </div>
+    </button>
+
+  </div>
+
+  <!-- ÉXITO -->
+  <div class="exito-card" id="exitoCard">
+    <div class="exito-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1e8e3e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h2>Registro guardado</h2>
+    <div class="exito-folio" id="exitoFolio"></div>
+    <p id="exitoTxt"></p>
+    <br><br>
+    <button class="btn-nuevo" onclick="location.reload()">Nuevo registro</button>
+  </div>
+
+</div><!-- /page-checklist -->
+
+
+<!-- ═══════════════════════════════════════════
+     PÁGINA 2: PROGRAMACIÓN DE PATIO
+════════════════════════════════════════════ -->
+<div class="page" id="page-programacion">
+  <div class="prog-page">
+
+    <div class="prog-info-bar">
+      <div class="prog-info-title">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C8000A" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        Programación de Patio
+      </div>
       <a class="btn-outline"
          href="https://docs.google.com/spreadsheets/d/1bod8AC0ppg4dW3X8xHO5celrWp6J4rOP9JUXk3JjksU/edit"
          target="_blank" rel="noopener">
@@ -290,46 +811,283 @@ svg { display: block; }
         Abrir en Sheets
       </a>
     </div>
-  </div>
 
-  <div class="notice">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-    </svg>
-    <span>
-      Esta es una vista de solo lectura. Para editar la programación, usa el botón
-      <strong>Abrir en Sheets</strong> — los cambios se reflejan aquí en segundos al recargar.
-    </span>
-  </div>
+    <div class="prog-notice">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <span>Vista de solo lectura. Para editar usa <strong>Abrir en Sheets</strong> — los cambios se reflejan aquí al recargar.</span>
+    </div>
 
-  <div class="sheet-wrapper">
-    <div class="sheet-toolbar">
-      <div class="sheet-toolbar-left">
-        <div class="status-dot"></div>
-        Conectado a Google Sheets · Se actualiza al recargar la página
+    <div class="sheet-wrapper">
+      <div class="sheet-toolbar">
+        <div class="sheet-toolbar-left">
+          <div class="status-dot"></div>
+          Conectado a Google Sheets · Se actualiza al recargar
+        </div>
+        <button class="btn-outline"
+          onclick="var f=document.getElementById('sheetFrame'); f.src=f.src;"
+          style="padding:6px 12px;font-size:12px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
+          Actualizar
+        </button>
       </div>
-      <button class="btn-outline" onclick="document.querySelector('iframe').src = document.querySelector('iframe').src" style="padding:6px 12px; font-size:12px;">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-        </svg>
-        Actualizar
-      </button>
+      <div class="sheet-frame-container">
+        <iframe id="sheetFrame"
+          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRolxvVPXg3-qT5mmqHeZCQVBORuxcsbcpUngdmc-gCQtXap6FpRPuKkWP5RvevBvu4DIzdrVrAz4rG/pubhtml?gid=1368288008&single=true&widget=true&headers=false"
+          title="Programación de Patio – Trans Ráfagas del Golfo"
+          allowfullscreen>
+        </iframe>
+      </div>
     </div>
 
-    <div class="sheet-frame-container">
-      <iframe
-        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRolxvVPXg3-qT5mmqHeZCQVBORuxcsbcpUngdmc-gCQtXap6FpRPuKkWP5RvevBvu4DIzdrVrAz4rG/pubhtml?gid=1368288008&single=true&widget=true&headers=false"
-        title="Programación de Patio – Trans Ráfagas del Golfo"
-        allowfullscreen>
-      </iframe>
-    </div>
+    <p class="footer-note">Trans Ráfagas del Golfo S.A. de C.V. · Los datos se sincronizan desde Google Sheets</p>
   </div>
+</div><!-- /page-programacion -->
 
-  <p class="footer-note">
-    Los datos se sincronizan desde Google Sheets · Trans Ráfagas del Golfo S.A. de C.V.
-  </p>
 
-</div>
+<script>
+// ── TAB SWITCHER ──────────────────────────────────────────────
+function cambiarTab(tab) {
+  document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('page-' + tab).classList.add('active');
+  // Ocultar folio badge en pestaña de programación
+  document.querySelector('.folio-badge').style.visibility = (tab === 'checklist') ? 'visible' : 'hidden';
+}
 
+// ── CONFIG ────────────────────────────────────────────────────
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbw3EsE2v5V3OeCBPQ3jXO83SEJlB9JW6VM9iUpV-fO5LR5Mizs7-MmsKYmc6X7wsJYd2w/exec";
+
+const LLANTAS = [
+  {pos:1,  ubi:"Tractor – Delantera Izq."},
+  {pos:2,  ubi:"Tractor – Delantera Der."},
+  {pos:3,  ubi:"Tractor – Trasera Izq. Ext."},
+  {pos:4,  ubi:"Tractor – Trasera Izq. Int."},
+  {pos:5,  ubi:"Tractor – Trasera Der. Int."},
+  {pos:6,  ubi:"Tractor – Trasera Der. Ext."},
+  {pos:7,  ubi:"Tractor – Trasera 2a Izq. Ext."},
+  {pos:8,  ubi:"Tractor – Trasera 2a Izq. Int."},
+  {pos:9,  ubi:"Tractor – Trasera 2a Der. Int."},
+  {pos:10, ubi:"Tractor – Trasera 2a Der. Ext."},
+  {pos:11, ubi:"1er Remolque – Eje 1 Izq. Ext."},
+  {pos:12, ubi:"1er Remolque – Eje 1 Izq. Int."},
+  {pos:13, ubi:"1er Remolque – Eje 1 Der. Int."},
+  {pos:14, ubi:"1er Remolque – Eje 1 Der. Ext."},
+  {pos:15, ubi:"1er Remolque – Eje 2 Izq. Ext."},
+  {pos:16, ubi:"1er Remolque – Eje 2 Izq. Int."},
+  {pos:17, ubi:"1er Remolque – Eje 2 Der. Int."},
+  {pos:18, ubi:"1er Remolque – Eje 2 Der. Ext."},
+  {pos:19, ubi:"1er Remolque – Eje 3 Izq. Ext."},
+  {pos:20, ubi:"1er Remolque – Eje 3 Izq. Int."},
+  {pos:21, ubi:"1er Remolque – Eje 3 Der. Int."},
+  {pos:22, ubi:"1er Remolque – Eje 3 Der. Ext."},
+  {pos:23, ubi:"2do Remolque – Eje 1 Izq. Ext."},
+  {pos:24, ubi:"2do Remolque – Eje 1 Izq. Int."},
+  {pos:25, ubi:"2do Remolque – Eje 1 Der. Int."},
+  {pos:26, ubi:"2do Remolque – Eje 1 Der. Ext."},
+  {pos:27, ubi:"2do Remolque – Eje 2 Izq. Ext."},
+  {pos:28, ubi:"2do Remolque – Eje 2 Izq. Int."},
+  {pos:29, ubi:"2do Remolque – Eje 2 Der. Int."},
+  {pos:30, ubi:"2do Remolque – Eje 2 Der. Ext."},
+  {pos:31, ubi:"2do Remolque – Eje 3 Izq. Ext."},
+  {pos:32, ubi:"2do Remolque – Eje 3 Izq. Int."},
+  {pos:33, ubi:"2do Remolque – Eje 3 Der. Int."},
+  {pos:34, ubi:"2do Remolque – Eje 3 Der. Ext."},
+  {pos:35, ubi:"Refacción Tractor"},
+  {pos:36, ubi:"Refacción Remolque"},
+];
+
+let tipoActual  = '';
+let folioActual = '';
+let fotosGen    = [];
+let fotosLlanta = [];
+
+window.addEventListener('DOMContentLoaded', function() {
+  var now = new Date();
+  document.getElementById('fecha').value = now.toISOString().slice(0,10);
+  document.getElementById('hora').value  = now.toTimeString().slice(0,5);
+  construirLlantas();
+  initDragDrop();
+});
+
+function construirLlantas() {
+  var contenedor = document.getElementById('listaLlantas');
+  LLANTAS.forEach(function(l) {
+    var div = document.createElement('div');
+    div.className = 'llanta-row';
+    div.innerHTML =
+      '<span class="llanta-num">' + l.pos + '</span>' +
+      '<span class="llanta-ubi">' + l.ubi + '</span>' +
+      '<input class="llanta-input" type="text" id="llanta_' + l.pos + '" placeholder="Núm. llanta" inputmode="text" autocomplete="off">';
+    contenedor.appendChild(div);
+  });
+}
+
+function agregarFotos(e) {
+  var grid = document.getElementById('fotoPreviewGrid');
+  Array.from(e.target.files).forEach(function(f) {
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      var idx = fotosGen.length;
+      fotosGen.push({ nombre: f.name, data: ev.target.result, tipo: 'general' });
+      var item = document.createElement('div');
+      item.className = 'foto-preview-item';
+      item.id = 'fpgen' + idx;
+      item.innerHTML = '<img src="' + ev.target.result + '"><button onclick="eliminarFotoGen(' + idx + ')" title="Eliminar">\xd7</button>';
+      grid.appendChild(item);
+    };
+    reader.readAsDataURL(f);
+  });
+  e.target.value = '';
+}
+
+function eliminarFotoGen(idx) {
+  fotosGen[idx] = null;
+  var el = document.getElementById('fpgen' + idx);
+  if (el) el.remove();
+}
+
+function agregarFotosLlanta(e) {
+  var grid = document.getElementById('fotoLlantaPreview');
+  Array.from(e.target.files).forEach(function(f) {
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      var idx = fotosLlanta.length;
+      fotosLlanta.push({ nombre: f.name, data: ev.target.result, tipo: 'llanta' });
+      var item = document.createElement('div');
+      item.className = 'foto-preview-item';
+      item.id = 'fpllanta' + idx;
+      item.innerHTML = '<img src="' + ev.target.result + '"><button onclick="eliminarFotoLlanta(' + idx + ')" title="Eliminar">\xd7</button>';
+      grid.appendChild(item);
+    };
+    reader.readAsDataURL(f);
+  });
+  e.target.value = '';
+}
+
+function eliminarFotoLlanta(idx) {
+  fotosLlanta[idx] = null;
+  var el = document.getElementById('fpllanta' + idx);
+  if (el) el.remove();
+}
+
+function initDragDrop() {
+  [
+    { drop: 'fotoDrop',       handler: agregarFotos },
+    { drop: 'fotoLlantaDrop', handler: agregarFotosLlanta }
+  ].forEach(function(item) {
+    var el = document.getElementById(item.drop);
+    if (!el) return;
+    el.addEventListener('dragover',  function(e) { e.preventDefault(); el.classList.add('drag-over'); });
+    el.addEventListener('dragleave', function()  { el.classList.remove('drag-over'); });
+    el.addEventListener('drop', function(e) {
+      e.preventDefault();
+      el.classList.remove('drag-over');
+      item.handler({ target: { files: e.dataTransfer.files, value: '' } });
+    });
+  });
+}
+
+async function seleccionarTipo(tipo) {
+  tipoActual = tipo;
+  document.getElementById('btnEntrada').className = 'tipo-btn' + (tipo === 'ENTRADA' ? ' active-entrada' : '');
+  document.getElementById('btnSalida').className  = 'tipo-btn' + (tipo === 'SALIDA'  ? ' active-salida'  : '');
+  document.getElementById('divInicio').style.display    = 'none';
+  document.getElementById('formContainer').classList.remove('visible');
+  document.getElementById('folioLoading').style.display = 'block';
+  document.getElementById('exitoCard').style.display    = 'none';
+
+  try {
+    var resp = await fetch(SHEETS_URL + '?action=folio&tipo=' + tipo);
+    var data = await resp.json();
+    folioActual = data.folio;
+  } catch(e) {
+    var d = new Date().toISOString().slice(0,10).replace(/-/g,'');
+    folioActual = (tipo === 'ENTRADA' ? 'ENT' : 'SAL') + '-' + d + '-' + String(Math.floor(Math.random()*9000)+1000);
+  }
+
+  document.getElementById('folioDisplay').textContent   = folioActual;
+  document.getElementById('folioLoading').style.display = 'none';
+  document.getElementById('formContainer').classList.add('visible');
+}
+
+async function enviarFormulario() {
+  if (!tipoActual) { alert('Selecciona Entrada o Salida'); return; }
+  var guardia   = document.getElementById('guardia').value.trim();
+  var placa     = document.getElementById('placaTractor').value.trim();
+  var conductor = document.getElementById('conductor').value.trim();
+  if (!guardia)   { alert('Escribe el nombre del guardia');     document.getElementById('guardia').focus();      return; }
+  if (!placa)     { alert('Escribe la placa del tractocamión'); document.getElementById('placaTractor').focus(); return; }
+  if (!conductor) { alert('Escribe el nombre del conductor');   document.getElementById('conductor').focus();    return; }
+
+  var llantasData = {};
+  LLANTAS.forEach(function(l) {
+    llantasData['llanta_' + l.pos] = document.getElementById('llanta_' + l.pos).value.trim();
+  });
+
+  var todasFotos = [
+    ...fotosLlanta.filter(function(f){ return f !== null; }),
+    ...fotosGen.filter(function(f){ return f !== null; })
+  ];
+
+  var payload = Object.assign({
+    folio:               folioActual,
+    tipo:                tipoActual,
+    fecha:               document.getElementById('fecha').value,
+    hora:                document.getElementById('hora').value,
+    guardia:             guardia,
+    placaTractor:        placa,
+    placa1Remolque:      document.getElementById('placa1Remolque').value.trim(),
+    placa2Remolque:      document.getElementById('placa2Remolque').value.trim(),
+    conductor:           conductor,
+    origen:              document.getElementById('origen').value.trim(),
+    destino:             document.getElementById('destino').value.trim(),
+    kilometraje:         document.getElementById('kilometraje').value,
+    diesel:              document.getElementById('diesel').value,
+    aceite:              document.getElementById('aceite').value,
+    estadoGeneral:       document.getElementById('estadoGeneral').value,
+    documentacion:       document.getElementById('documentacion').value,
+    observaciones:       document.getElementById('observacionesGenerales').value.trim(),
+    firmGuardia:         document.getElementById('firmGuardia').value.trim(),
+    firmConductor:       document.getElementById('firmConductor').value.trim(),
+    llantasPosProblema:  document.getElementById('llantasPosProblema').value.trim(),
+    llantasDescProblema: document.getElementById('llantasDescProblema').value.trim(),
+    fotos:               todasFotos
+  }, llantasData);
+
+  var btn = document.getElementById('btnEnviar');
+  btn.classList.add('loading');
+  btn.disabled = true;
+  btn.querySelector('.btn-text').textContent = 'Guardando…';
+
+  try {
+    await fetch(SHEETS_URL, {
+      method:  'POST',
+      mode:    'no-cors',
+      body:    JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' }
+    });
+    mostrarExito();
+  } catch(err) {
+    alert('Error al guardar. Verifica tu conexión e intenta de nuevo.');
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    btn.querySelector('.btn-text').textContent = 'Registrar y Guardar';
+  }
+}
+
+function mostrarExito() {
+  document.getElementById('formContainer').classList.remove('visible');
+  document.getElementById('exitoFolio').textContent = folioActual;
+  document.getElementById('exitoTxt').textContent   =
+    'Registro de ' + tipoActual.toLowerCase() + ' guardado correctamente en Google Sheets.';
+  document.getElementById('exitoCard').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
 </body>
 </html>
